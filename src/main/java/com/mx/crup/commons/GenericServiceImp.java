@@ -1,0 +1,42 @@
+package com.mx.crup.commons;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Service;
+
+@Service
+public abstract class GenericServiceImp <T, ID extends Serializable> implements GenericServiceAPI<T, ID> {
+
+	@Override
+	public T guardar(T entity) {
+		return getDao().save(entity);
+	}
+
+	@Override
+	public void borrar(ID id) {
+		getDao().deleteById(id);
+		
+	}
+
+	@Override
+	public T obtener(ID id) {
+		Optional<T> obj = getDao().findById(id);
+		if(obj.isPresent()) {
+			return obj.get();
+		}
+		return null;
+	}
+
+	@Override
+	public List<T> getAll() {
+		List<T> lista = new ArrayList<>();
+		getDao().findAll().forEach(obj -> lista.add(obj));
+		return lista;
+	}
+
+	public abstract CrudRepository<T, ID> getDao();	
+}
